@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from catboost import CatBoostClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
+from imblearn.under_sampling import RandomUnderSampler
 
 st.title('Phone Price Prediction')
 
@@ -30,7 +31,11 @@ if st.checkbox('Preprocess Data'):
     X = data.drop(target_column, axis=1)
     y = data[target_column]
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Applying Random Under-Sampling
+    rus = RandomUnderSampler(random_state=42)
+    X_resampled, y_resampled = rus.fit_resample(X, y)
+    
+    X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
     
     # Feature engineering: Standard scaling
     scaler = StandardScaler()
